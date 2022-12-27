@@ -26,7 +26,7 @@ public class SocialMediaUser implements Serializable {
 	@Id
 	private String userId;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<Post> posts = new ArrayList<>();
 
 	@JoinTable(name = "followers", joinColumns = { @JoinColumn(name = "userId") }, inverseJoinColumns = {
