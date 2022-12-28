@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.cs.social.media.entity.SocialMediaUser;
+import com.cs.social.media.exception.SocialMediaAppAlreadyFollowingException;
 import com.cs.social.media.exception.SocialMediaAppUserAlreadyExistsException;
 import com.cs.social.media.exception.SocialMediaAppUserDoesNotExistException;
+import com.cs.social.media.exception.SocialMediaAppUserNotFollowingException;
 import com.cs.social.media.model.UserOperationsDto;
 import com.cs.social.media.repository.UserDetailsRepo;
 
@@ -36,8 +38,12 @@ public class UserService {
 			throw new SocialMediaAppUserDoesNotExistException();
 		if (userRepo.findById(userDetails.getFollowerId()).isPresent()) {
 			toFollow = userRepo.findById(userDetails.getFollowerId()).get();
-			user.addFollower(toFollow);
-			userRepo.save(user);
+			if (user.getFollowing().contains(toFollow))
+				throw new SocialMediaAppAlreadyFollowingException();
+			else {
+				user.addFollower(toFollow);
+				userRepo.save(user);
+			}
 		} else
 			throw new SocialMediaAppUserDoesNotExistException();
 
@@ -53,9 +59,14 @@ public class UserService {
 			throw new SocialMediaAppUserDoesNotExistException();
 		if (userRepo.findById(userDetails.getFollowerId()).isPresent()) {
 			toUnfollow = userRepo.findById(userDetails.getFollowerId()).get();
-			user.removeFollower(toUnfollow);
-			userRepo.save(user);
-		}
+			if (!user.getFollowing().contains(toUnfollow))
+				throw new SocialMediaAppUserNotFollowingException();
+			else {
+				user.removeFollower(toUnfollow);
+				userRepo.save(user);
+			}
+		} else
+			throw new SocialMediaAppUserDoesNotExistException();
 
 	}
 

@@ -25,4 +25,10 @@ public class SocialMediaAppGlobalExceptionHandler {
 			SocialMediaAppAlreadyFollowingException socialMediaAppAlreadyFollowingException) {
 		return new ResponseEntity("Already Following This User", HttpStatus.CONFLICT);
 	}
+	@ExceptionHandler(value = SocialMediaAppUserNotFollowingException.class)
+	public ResponseEntity SocialMediaAppUserNotFollowingException(
+			SocialMediaAppUserNotFollowingException socialMediaAppUserNotFollowingException) {
+		return new ResponseEntity("Not Following This User", HttpStatus.CONFLICT);
+	}
+	
 }
